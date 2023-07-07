@@ -20,15 +20,15 @@ async function submitdata(event){
         let dataCreation = await axios.post('http://localhost:3000/signup/createuser',details).then(result=>{
             console.log(result)
             if(result.request.status===200){
-                alert("user created successfully")
-            }
-        }).catch((err)=>{
-            console.log(err);
-            if(err.response.request.status===409){
+                alert("user created successfully");
+                window.location.href='../login/login.html'
+            }else if(response.request.status===409){
                 alert('user already exixt')
             }else{
                 alert('something wrong');
             }
+        }).catch((err)=>{
+            console.log(err);
         })
         
     }
