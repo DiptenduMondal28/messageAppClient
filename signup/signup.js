@@ -16,6 +16,7 @@ async function submitdata(event){
             password:password
         }
         console.log(details);
+        document.querySelector('#small').innerHTML='';
         let dataCreation = await axios.post('http://localhost:3000/signup/createuser',details).then(result=>{
             console.log(result)
             if(result.request.status===200){
