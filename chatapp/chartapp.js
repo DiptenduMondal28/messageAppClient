@@ -12,27 +12,31 @@ messageButton.addEventListener('click',async(e)=>{
     })
 });
 
+
 document.addEventListener('DOMContentLoaded',async(e)=>{
     e.preventDefault();
     const token = localStorage.getItem('token');
-    await axios.get('http://localhost:3000/user/reply',{headers:{'Authorization':token}}).then(response=>{
-        // const messageBox=document.getElementById('message-container');
-        // const reply = document.createElement('')
+    setInterval(async()=>{
+        await axios.get('http://localhost:3000/user/reply',{headers:{'Authorization':token}}).then(response=>{
         console.log(response.data.message);
         for(const reply of response.data.message){
             show(reply);
         }
-    })
+        });
+
+    },1000)
 })
+
 
 async function show(reply){
     const messageBox=document.getElementById('message-container');
     const mesageshow = document.createElement('div');
-    mesageshow.innerHTML=`<h4>UserID:${reply.userId  }message:${reply.message}</h4>`
+    mesageshow.innerHTML=`<h3 id="reply">${reply.user.name}:${reply.message}</h3>`
+    const { width } = mesageshow.getBoundingClientRect();
+    mesageshow.style.width = width + 'px';
     messageBox.appendChild(mesageshow);
+    setInterval(async()=>{
+        mesageshow.innerHTML='';
+    },950);
 }
 
-setTimeout(function() {
-    location.reload();
-  }, 50000); 
-// setInterval('show',500)
