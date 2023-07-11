@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded',async(e)=>{
     const group=localStorage.getItem('group');
     console.log(group,typeof(group))
     console.log(start);
-    setInterval(async()=>{
+    // setInterval(async()=>{
         if(group!=null){
         await axios.get(`http://localhost:3000/user/reply?start=${start}&group=${group}`,{headers:{'Authorization':token}}).then(response=>{
             console.log(response);
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded',async(e)=>{
         
         });
     }
-    },1000)
+    // },1000)
 })
 
 
@@ -71,9 +71,9 @@ async function show(reply){
     const { width } = mesageshow.getBoundingClientRect();
     mesageshow.style.width = width + 'px';
     messageBox.appendChild(mesageshow);
-    setInterval(async()=>{
-        mesageshow.innerHTML='';
-    },950);
+    // setInterval(async()=>{
+    //     mesageshow.innerHTML='';
+    // },950);
 }
 // localStorage.setItem('group',0);
 
@@ -109,25 +109,46 @@ async function findGroup(group){
         const clickedButtonId = event.target.id;
         localStorage.setItem('group',clickedButtonId);
         const tokenId = localStorage.getItem('token');
-        const adduserButton=document.createElement('button');
-        adduserButton.innerHTML= 'add user for:'+group.name;
         const messageContainer=document.getElementById('adduserbuttonContainer');
+
+
+        //add user button
+        const adduserButton=document.createElement('button');
+        adduserButton.innerHTML= 'Add-user in'+group.name;
         messageContainer.appendChild(adduserButton)
         adduserButton.onclick=(event)=>{
             event.preventDefault();
             const url = `../adduser/adduser.html?id=${clickedButtonId}&token=${tokenId}`;
             window.open(url);
         }
+
+        // remove user button 
+        const removeuserbutton=document.createElement('button')
+        removeuserbutton.innerHTML='Romeove from'+group.name;
+        removeuserbutton.style.background='red';
+        messageContainer.appendChild(removeuserbutton);
+        removeuserbutton.onclick=(event)=>{
+            event.preventDefault();
+            const removeUrl=`../removeuser/remove.html?id=${clickedButtonId}&token=${tokenId}`;
+            window.open(removeUrl);
+        }
+        
+        //can make another member admin
+        // const adminbutton=document.createElement('button');
+        // adminbutton.innerHTML='add admin '+group.id;
+        // adminbutton.style.background='green';
+        // messageContainer.appendChild(adminbutton);
+        // adminbutton.onclick=(event)=>{
+        //     event.preventDefault();
+        //     const addAdminUrl=`../admin/admin.html?id=${clickedButtonId}&token=${tokenId}`;
+        //     window.open(addAdminUrl);
+        // };
+
+        //message box to send messages to group
         const messageSenderForm=document.getElementById('footer-input');
         messageSenderForm.style.display='flex';
         sendmessage(group.id);
-        // const replies = JSON.parse(localStorage.getItem('messages'));
-        // const gruopid=(localStorage.getItem('group'));
-        // console.log(gruopid)
         
-        // for(reply of replies){
-        //     show(reply);
-        // }
     }
 }
 
