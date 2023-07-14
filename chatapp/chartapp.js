@@ -1,80 +1,3 @@
-// const messageButton = document.getElementById('messageButton');
-
-// messageButton.addEventListener('click',async(e)=>{
-//     // e.preventDefault();
-//     const message=document.getElementById('message').value;
-//     console.log(message)
-//     const token = localStorage.getItem('token')
-//     await axios.post('http://localhost:3000/user/message',{message:message},{headers:{'Authorization':token}}).then(response=>{
-//         console.log(response);
-//     }).catch((err)=>{
-//         console.log(err);
-//     })
-// });
-
-
-document.addEventListener('DOMContentLoaded',async(e)=>{
-    e.preventDefault();
-    const token = localStorage.getItem('token');
-    const local= localStorage.getItem('messages')
-    let start=0;
-    console.log(local)
-    if(!local || JSON.parse(local).length===0){
-        start=0;
-    }else{
-        let messageArrray=JSON.parse(local);
-        let len=messageArrray.length;
-        start = messageArrray[len-1].id;
-
-    }
-    console.log(localStorage.getItem('group'))
-    const group=localStorage.getItem('group');
-    console.log(group,typeof(group))
-    console.log(start);
-    setInterval(async()=>{
-        if(group!=null){
-        await axios.get(`http://localhost:3000/user/allreply?start=${start}&group=${group}`,{headers:{'Authorization':token}}).then(response=>{
-            console.log(response);
-            const backData=response.data.message;
-            // let localMessage=localStorage.getItem('messages');
-            // if(!localMessage  || JSON.parse(localMessage).length===0){
-                localStorage.setItem('messages',JSON.stringify(backData));
-            // }else{
-            //     const arrayOflocalMessage=JSON.parse(localMessage);
-            //     const totalMessges=arrayOflocalMessage.concat(backData);
-            //     localStorage.setItem('messages',JSON.stringify(totalMessges));
-            // }
-            const replies = JSON.parse(localStorage.getItem('messages'));
-            console.log(replies)
-            const group=Number(localStorage.getItem('group'));
-            console.log(group,typeof(group))
-            
-            for(reply of replies){
-                if(reply.groupId===group){
-                    show(reply);
-                }
-            }
-        
-        });
-    }
-    },5000)
-})
-
-
-  
-
-async function show(reply){
-    const messageBox=document.getElementById('message-container');
-    const mesageshow = document.createElement('div');
-    mesageshow.innerHTML=`<h3 id="reply">${reply.user.name}:${reply.message}</h3>`
-    const { width } = mesageshow.getBoundingClientRect();
-    mesageshow.style.width = width + 'px';
-    messageBox.appendChild(mesageshow);
-    setInterval(async()=>{
-        mesageshow.innerHTML='';
-    },4950);
-}
-// localStorage.setItem('group',0);
 
 const groupname=document.getElementById('groupname');
 groupname.addEventListener('click',(e)=>{
@@ -148,7 +71,7 @@ async function findGroup(group){
         const messageSenderForm=document.getElementById('footer-input');
         messageSenderForm.style.display='flex';
         sendmessage(group.id);
-        
+        showmessage(group.id);
     }
 }
 
@@ -183,3 +106,84 @@ async function sendmessage(groupid){
     });
 }
 
+//change starts here
+
+
+async function showmessage(groupid){
+    const token = localStorage.getItem('token');
+    let start=0;
+    console.log(start);
+    await axios.get(`http://localhost:3000/user/allreply?start=${start}&group=${groupid}`,{headers:{'Authorization':token}}).then(response=>{
+        console.log(response);
+        const backData=response.data.message;
+        localStorage.setItem('messages',JSON.stringify(backData));
+        const replies = JSON.parse(localStorage.getItem('messages'));
+        console.log(replies)
+        const group=Number(localStorage.getItem('group'));
+        console.log(group,typeof(group))
+        
+        for(reply of replies){
+            if(reply.groupId===group){
+                show(reply);
+            }
+        }
+    
+    });
+    lastmessage(groupid);
+}
+
+async function show(reply){
+        const messageBox=document.getElementById('message-container');
+        const mesageshow = document.createElement('div');
+        mesageshow.innerHTML=`<h3 id="reply">${reply.user.name}:${reply.message}</h3>`
+        const { width } = mesageshow.getBoundingClientRect();
+        mesageshow.style.width = `${width}px`;
+        mesageshow.style.whiteSpace = 'nowrap';
+        messageBox.appendChild(mesageshow);
+}
+
+async function lastmessage(groupid){
+    setInterval(async()=>{
+        const localfullmessage=JSON.parse(localStorage.getItem('messages'));
+        console.log(localfullmessage);
+        console.log(localfullmessage[localfullmessage.length-1]);
+        const locallastmessageid=localfullmessage[localfullmessage.length-1].id;
+        console.log(locallastmessageid)
+        const group=parseInt(localStorage.getItem('group'))
+        console.log(group);
+        const token=localStorage.getItem('token');
+    // setInterval(async()=>{
+        const dblastmessage=await axios.get(`http://localhost:3000/user/lastmessage?group=${group}`,{headers:{'Authorization':token}});
+        console.log(dblastmessage);
+        const flag=compareObjects(locallastmessageid,dblastmessage.data.id);
+        console.log('compare',locallastmessageid,dblastmessage.data.id)
+        console.log(flag);
+        if(flag===false){
+            const final=localfullmessage.concat(dblastmessage.data);
+            console.log(final);
+            localStorage.setItem('messages',JSON.stringify(final));
+            showafter(dblastmessage);
+        }
+    },2000)
+}
+
+
+function compareObjects(obj1, obj2) {
+    if(obj1!=obj2){
+        return false;
+    }
+  
+    return true;
+  }
+
+  async function showafter(dblastmessage){
+        console.log('show after calling')
+        const messageBox=document.getElementById('message-container');
+        const mesageshow = document.createElement('div');
+        mesageshow.innerHTML=`<h3 id="reply">${dblastmessage.data.user.name}:${dblastmessage.data.message}</h3>`
+        mesageshow.style.color='rgb(235, 231, 34)';
+        const { width } = mesageshow.getBoundingClientRect();
+        mesageshow.style.width = `${width}px`;
+        mesageshow.style.whiteSpace = 'nowrap';
+        messageBox.appendChild(mesageshow);
+  }

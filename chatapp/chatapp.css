@@ -148,7 +148,7 @@ button:hover{
 }
 
 #reply{
-  color: #110f0a;
+  color: #fdef23;
   background-color: wheat;
   justify-content: left;
   text-align: left;
@@ -162,6 +162,3 @@ button:hover{
   gap: 10px;
 }
 
-/* xy{
-  color:rgb(245, 202, 13);
-} */
