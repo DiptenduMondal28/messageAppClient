@@ -31,9 +31,9 @@ document.addEventListener('DOMContentLoaded',async(e)=>{
     const group=localStorage.getItem('group');
     console.log(group,typeof(group))
     console.log(start);
-    // setInterval(async()=>{
+    setInterval(async()=>{
         if(group!=null){
-        await axios.get(`http://localhost:3000/user/reply?start=${start}&group=${group}`,{headers:{'Authorization':token}}).then(response=>{
+        await axios.get(`http://localhost:3000/user/allreply?start=${start}&group=${group}`,{headers:{'Authorization':token}}).then(response=>{
             console.log(response);
             const backData=response.data.message;
             // let localMessage=localStorage.getItem('messages');
@@ -53,12 +53,11 @@ document.addEventListener('DOMContentLoaded',async(e)=>{
                 if(reply.groupId===group){
                     show(reply);
                 }
-                // show(reply);
-        }
+            }
         
         });
     }
-    // },1000)
+    },5000)
 })
 
 
@@ -71,9 +70,9 @@ async function show(reply){
     const { width } = mesageshow.getBoundingClientRect();
     mesageshow.style.width = width + 'px';
     messageBox.appendChild(mesageshow);
-    // setInterval(async()=>{
-    //     mesageshow.innerHTML='';
-    // },950);
+    setInterval(async()=>{
+        mesageshow.innerHTML='';
+    },4950);
 }
 // localStorage.setItem('group',0);
 
@@ -103,8 +102,9 @@ async function findGroup(group){
     const buttonid=group.id;
     groupButton.id=buttonid;
     groups.appendChild(groupButton);
-
+    localStorage.setItem('group',0);
     groupButton.onclick=(event)=>{
+        clearButtons();
         event.preventDefault();
         const clickedButtonId = event.target.id;
         localStorage.setItem('group',clickedButtonId);
@@ -151,6 +151,17 @@ async function findGroup(group){
         
     }
 }
+
+async function clearButtons() {
+    const buttonDiv = document.getElementById('adduserbuttonContainer');
+    const buttons = buttonDiv.getElementsByTagName('button');
+
+    // Remove each button from the div
+    while (buttons.length > 0) {
+        buttonDiv.removeChild(buttons[0]);
+    }
+}
+  
 
 
 async function sendmessage(groupid){

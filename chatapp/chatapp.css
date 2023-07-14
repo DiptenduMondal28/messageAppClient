@@ -1,3 +1,10 @@
+*{
+  padding: 0;
+  margin: 0;
+  font-family: sans-serif;
+  box-sizing: border-box;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -81,6 +88,8 @@ body {
     padding: 10px;
     justify-content: center;
     text-align: center;
+    display: flex;
+    flex-direction: column;
   }
   
   .message {
@@ -152,3 +161,7 @@ button:hover{
   flex-direction: column;
   gap: 10px;
 }
+
+/* xy{
+  color:rgb(245, 202, 13);
+} */
