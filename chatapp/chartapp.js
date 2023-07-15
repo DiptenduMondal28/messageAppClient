@@ -1,4 +1,6 @@
 
+
+
 const groupname=document.getElementById('groupname');
 groupname.addEventListener('click',(e)=>{
     e.preventDefault();
@@ -67,14 +69,46 @@ async function findGroup(group){
         //     window.open(addAdminUrl);
         // };
 
-        //message box to send messages to group
+        //message box to send messages to group and file to send file
         const messageSenderForm=document.getElementById('footer-input');
         messageSenderForm.style.display='flex';
         sendmessage(group.id);
+        //show messages
         showmessage(group.id);
+        //file send to group my be message
+        filesend(group.id);
     }
 }
 
+//send file to the group
+async function filesend(groupid){
+    const sendAttachmentButton=document.getElementById('sendAttachmentButton');
+    sendAttachmentButton.addEventListener('click',async(e)=>{
+        e.preventDefault();
+        const attachment=document.getElementById('sendAttachment');
+        const files=attachment.files[0];
+
+        const file = new FormData();
+        file.append('file', files);
+
+        console.log(file);
+        const token=localStorage.getItem('token');
+        await axios.post('http://localhost:3000/user/file',{file:file,groupid:groupid},{headers:{
+            'Authorization':token,
+            'Content-Type': 'multipart/form-data'
+        }}).then(res=>{
+            console.log(res);
+        }).catch(err=>{
+            console.log(err);
+        })
+    });
+}
+
+
+
+
+
+//clear all buttons when sfited from one to another group
 async function clearButtons() {
     const buttonDiv = document.getElementById('adduserbuttonContainer');
     const buttons = buttonDiv.getElementsByTagName('button');
@@ -84,9 +118,8 @@ async function clearButtons() {
         buttonDiv.removeChild(buttons[0]);
     }
 }
-  
 
-
+//send message to the particulr group which one is opended
 async function sendmessage(groupid){
     const messageButton = document.getElementById('messageButton');
 
@@ -96,7 +129,8 @@ async function sendmessage(groupid){
         const message=document.getElementById('message').value;
         document.getElementById('message').value=null;
         console.log(message)
-        const token = localStorage.getItem('token')
+        const token = localStorage.getItem('token');
+        console.log(token)
         await axios.post('http://localhost:3000/user/message',{message:message,groupid:groupid},{headers:{'Authorization':token}}).then(response=>{
             console.log(response);
         }).catch((err)=>{
@@ -106,9 +140,7 @@ async function sendmessage(groupid){
     });
 }
 
-//change starts here
-
-
+//show the messages
 async function showmessage(groupid){
     const token = localStorage.getItem('token');
     let start=0;
@@ -122,13 +154,14 @@ async function showmessage(groupid){
         const group=Number(localStorage.getItem('group'));
         console.log(group,typeof(group))
         
-        for(reply of replies){
+        for( let reply of replies){
             if(reply.groupId===group){
                 show(reply);
             }
         }
     
     });
+   
     lastmessage(groupid);
 }
 
@@ -143,7 +176,7 @@ async function show(reply){
 }
 
 async function lastmessage(groupid){
-    setInterval(async()=>{
+    // setInterval(async()=>{
         const localfullmessage=JSON.parse(localStorage.getItem('messages'));
         console.log(localfullmessage);
         console.log(localfullmessage[localfullmessage.length-1]);
@@ -164,9 +197,8 @@ async function lastmessage(groupid){
             localStorage.setItem('messages',JSON.stringify(final));
             showafter(dblastmessage);
         }
-    },2000)
+    // },2000);
 }
-
 
 function compareObjects(obj1, obj2) {
     if(obj1!=obj2){
