@@ -23,6 +23,11 @@
         <form class="footer-form" style="display: none;" id="footer-input">
             <input type="text" id="message">
             <button type="submit" id="messageButton">send</button>
+            <form enctype="multipart/form-data" id="image">
+                <label for="file"><i style="background-color: #913175; border-color: #CD5888;" class="material-icons btn btn-primary">attachment</i></label>
+                <input type="file" id="file" style="display:none;" name="file">
+                <button id="sendAttachmentButton" style="background-color: #913175; border-color: #CD5888;" class="btn btn-primary btn-sm">send</button>
+            </form>
         </form>
         <div id="sendAttachmentButton"></div>
         <div id="adduserbuttonContainer"></div>
