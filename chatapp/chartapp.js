@@ -66,6 +66,33 @@ async function findGroup(group){
         //     const addAdminUrl=`../admin/admin.html?id=${clickedButtonId}&token=${tokenId}`;
         //     window.open(addAdminUrl);
         // };
+        const sendAttachmentButton = document.getElementById('sendAttachmentButton');
+    sendAttachmentButton.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const attachment = document.getElementById('file');
+        const file = attachment.files[0];
+
+        if (file) {
+        const token = localStorage.getItem('token');
+        const formData = new FormData();
+        formData.append('file', file);
+        console.log(formData)
+
+        await axios
+            .post(`http://localhost:3000/user/file?groupid=${groupid}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: token,
+            },
+            })
+            .then((res) => {
+            console.log(res);
+            })
+            .catch((err) => {
+            console.log(err);
+            });
+        }
+    });
 
         //message box to send messages to group
         const messageSenderForm=document.getElementById('footer-input');
@@ -187,3 +214,55 @@ function compareObjects(obj1, obj2) {
         mesageshow.style.whiteSpace = 'nowrap';
         messageBox.appendChild(mesageshow);
   }
+
+
+  //send file to the group
+async function filesend(groupid){
+    // const sendAttachmentButton=document.getElementById('sendAttachmentButton');
+    // sendAttachmentButton.addEventListener('click',async(e)=>{
+    //     e.preventDefault();
+    //     const attachment=document.getElementById('sendAttachment');
+    //     const files=attachment.files[0];
+
+    //     const file = new FormData();
+    //     file.append('file', files);
+
+    //     console.log(file);
+    //     const token=localStorage.getItem('token');
+    //     await axios.post('http://localhost:3000/user/file',{file:file,groupid:groupid},{headers:{
+    //         'Authorization':token,
+    //         'Content-Type': 'multipart/form-data'
+    //     }}).then(res=>{
+    //         console.log(res);
+    //     }).catch(err=>{
+    //         console.log(err);
+    //     })
+    // });
+    const sendAttachmentButton = document.getElementById('sendAttachmentButton');
+    sendAttachmentButton.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const attachment = document.getElementById('file');
+        const file = attachment.files[0];
+
+        if (file) {
+        const token = localStorage.getItem('token');
+        const formData = new FormData();
+        formData.append('file', file);
+        console.log(formData)
+
+        await axios
+            .post(`http://localhost:3000/user/file?groupid=${groupid}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: token,
+            },
+            })
+            .then((res) => {
+            console.log(res);
+            })
+            .catch((err) => {
+            console.log(err);
+            });
+        }
+    });
+}
